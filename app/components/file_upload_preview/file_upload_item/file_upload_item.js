@@ -15,7 +15,6 @@ import FileUploadRetry from 'app/components/file_upload_preview/file_upload_retr
 import FileUploadRemove from 'app/components/file_upload_preview/file_upload_remove';
 import mattermostBucket from 'app/mattermost_bucket';
 import {buildFileUploadData, encodeHeaderURIStringToUTF8} from 'app/utils/file';
-import LocalConfig from 'assets/config';
 
 export default class FileUploadItem extends PureComponent {
     static propTypes = {
@@ -74,15 +73,13 @@ export default class FileUploadItem extends PureComponent {
         const {actions, channelId, file, rootId} = this.props;
         const response = JSON.parse(res.data);
         if (res.respInfo.status === 200 || res.respInfo.status === 201) {
-            this.setState({progress: 100}, () => {
-                const data = response.file_infos.map((f) => {
-                    return {
-                        ...f,
-                        clientId: file.clientId,
-                    };
-                });
-                actions.uploadComplete(data, channelId, rootId);
+            const data = response.file_infos.map((f) => {
+                return {
+                    ...f,
+                    clientId: file.clientId,
+                };
             });
+            actions.uploadComplete(data, channelId, rootId);
         } else {
             actions.uploadFailed([file.clientId], channelId, rootId, response.message);
         }
@@ -118,7 +115,9 @@ export default class FileUploadItem extends PureComponent {
 
         const headers = {
             Authorization: `Bearer ${Client4.getToken()}`,
+            'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'multipart/form-data',
+            'X-CSRF-Token': Client4.csrf,
         };
 
         const fileInfo = {
@@ -136,7 +135,7 @@ export default class FileUploadItem extends PureComponent {
 
         Client4.trackEvent('api', 'api_files_upload');
 
-        const certificate = await mattermostBucket.getPreference('cert', LocalConfig.AppGroupId);
+        const certificate = await mattermostBucket.getPreference('cert');
         const options = {
             timeout: 10000,
             certificate,
@@ -174,6 +173,7 @@ export default class FileUploadItem extends PureComponent {
             filePreviewComponent = (
                 <FileAttachmentImage
                     file={file}
+                    imageSize='fullsize'
                     imageHeight={100}
                     imageWidth={100}
                     wrapperHeight={100}
@@ -273,6 +273,7 @@ const styles = StyleSheet.create({
     progressCirclePercentage: {
         alignItems: 'center',
         flex: 1,
+        justifyContent: 'center',
     },
     progressContent: {
         alignItems: 'center',
@@ -280,7 +281,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         left: 0,
         position: 'absolute',
-        top: 40,
         width: '100%',
     },
     progressText: {

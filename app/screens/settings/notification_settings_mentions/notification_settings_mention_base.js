@@ -17,6 +17,10 @@ export default class NotificationSettingsMentionsBase extends PureComponent {
         theme: PropTypes.object.isRequired,
     };
 
+    static defaultProps = {
+        currentUser: {},
+    };
+
     constructor(props) {
         super(props);
 
@@ -53,18 +57,18 @@ export default class NotificationSettingsMentionsBase extends PureComponent {
         }
 
         const comments = notifyProps.comments || 'any';
+        const mentionKeysString = mentionKeys.join(',');
 
         const newState = {
             ...notifyProps,
             comments,
             newReplyValue: comments,
             usernameMention: usernameMentionIndex > -1,
-            mention_keys: mentionKeys.join(','),
+            mention_keys: mentionKeysString,
+            androidKeywords: mentionKeysString,
             showKeywordsModal: false,
             showReplyModal: false,
         };
-
-        this.keywords = newState.mention_keys;
 
         return newState;
     };

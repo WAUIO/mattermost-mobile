@@ -4,9 +4,8 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import {Platform, View} from 'react-native';
-import DeviceInfo from 'react-native-device-info';
 
-import {ViewTypes} from 'app/constants';
+import {DeviceTypes, ViewTypes} from 'app/constants';
 import {makeStyleSheetFromTheme} from 'app/utils/theme';
 
 import ChannelDrawerButton from './channel_drawer_button';
@@ -32,12 +31,6 @@ export default class ChannelNavBar extends PureComponent {
         theme: PropTypes.object.isRequired,
     };
 
-    constructor(props) {
-        super(props);
-
-        this.isX = DeviceInfo.getModel() === 'iPhone X';
-    }
-
     render() {
         const {isLandscape, navigator, onPress, theme} = this.props;
         const {openChannelDrawer, openSettingsDrawer} = this.props;
@@ -48,25 +41,35 @@ export default class ChannelNavBar extends PureComponent {
         switch (Platform.OS) {
         case 'android':
             height = ANDROID_TOP_PORTRAIT;
-            if (isLandscape) {
+            if (DeviceTypes.IS_TABLET) {
                 height = ANDROID_TOP_LANDSCAPE;
             }
             break;
         case 'ios':
             height = IOS_TOP_PORTRAIT - STATUS_BAR_HEIGHT;
-            if (isLandscape) {
+            if (DeviceTypes.IS_TABLET && isLandscape) {
+                height -= 1;
+            } else if (isLandscape) {
                 height = IOS_TOP_LANDSCAPE;
             }
 
-            if (this.isX && isLandscape) {
+            if (DeviceTypes.IS_IPHONE_X && isLandscape) {
                 padding.paddingHorizontal = 10;
             }
             break;
         }
 
+        let drawerButtonVisible = false;
+        if (!DeviceTypes.IS_TABLET) {
+            drawerButtonVisible = true;
+        }
+
         return (
             <View style={[style.header, padding, {height}]}>
-                <ChannelDrawerButton openDrawer={openChannelDrawer}/>
+                <ChannelDrawerButton
+                    openDrawer={openChannelDrawer}
+                    visible={drawerButtonVisible}
+                />
                 <ChannelTitle onPress={onPress}/>
                 <ChannelSearchButton
                     navigator={navigator}

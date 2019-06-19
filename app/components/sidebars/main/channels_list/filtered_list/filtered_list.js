@@ -6,6 +6,8 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {
     FlatList,
+    Keyboard,
+    Platform,
     Text,
     TouchableHighlight,
     View,
@@ -18,6 +20,7 @@ import {changeOpacity} from 'app/utils/theme';
 import {General} from 'mattermost-redux/constants';
 import {sortChannelsByDisplayName} from 'mattermost-redux/utils/channel_utils';
 import {displayUsername} from 'mattermost-redux/utils/user_utils';
+import {t} from 'app/utils/i18n';
 
 import ChannelItem from 'app/components/sidebars/main/channels_list/channel_item';
 import {ListTypes} from 'app/constants';
@@ -59,6 +62,12 @@ class FilteredList extends Component {
 
     constructor(props) {
         super(props);
+
+        this.keyboardDismissProp = {
+            keyboardDismissMode: Platform.OS === 'ios' ? 'interactive' : 'none',
+            onScrollBeginDrag: Keyboard.dismiss,
+        };
+
         this.state = {
             dataSource: this.buildData(props),
         };
@@ -110,7 +119,6 @@ class FilteredList extends Component {
     createChannelElement = (channel) => {
         return (
             <ChannelItem
-                ref={channel.id}
                 channelId={channel.id}
                 channel={channel}
                 isSearchResult={true}
@@ -145,27 +153,27 @@ class FilteredList extends Component {
     getSectionBuilders = () => ({
         unreads: {
             builder: this.buildUnreadChannelsForSearch,
-            id: 'mobile.channel_list.unreads',
+            id: t('mobile.channel_list.unreads'),
             defaultMessage: 'UNREADS',
         },
         channels: {
             builder: this.buildChannelsForSearch,
-            id: 'mobile.channel_list.channels',
+            id: t('mobile.channel_list.channels'),
             defaultMessage: 'CHANNELS',
         },
         dms: {
             builder: this.buildCurrentDMSForSearch,
-            id: 'sidebar.direct',
+            id: t('sidebar.direct'),
             defaultMessage: 'DIRECT MESSAGES',
         },
         members: {
             builder: this.buildMembersForSearch,
-            id: 'mobile.channel_list.members',
+            id: t('mobile.channel_list.members'),
             defaultMessage: 'MEMBERS',
         },
         nonmembers: {
             builder: this.buildOtherMembersForSearch,
-            id: 'mobile.channel_list.not_member',
+            id: t('mobile.channel_list.not_member'),
             defaultMessage: 'NOT A MEMBER',
         },
     });
@@ -203,7 +211,7 @@ class FilteredList extends Component {
         const pastDirectMessageUsers = pastDirectMessages.map((p) => profiles[p]).filter((p) => typeof p !== 'undefined');
 
         const dms = [...directChannelUsers, ...pastDirectMessageUsers].map((u) => {
-            const displayName = displayUsername(u, teammateNameDisplay);
+            const displayName = displayUsername(u, teammateNameDisplay, false);
 
             return {
                 id: u.id,
@@ -211,11 +219,15 @@ class FilteredList extends Component {
                 display_name: displayName,
                 username: u.username,
                 email: u.email,
-                name: displayName,
                 type: General.DM_CHANNEL,
                 fake: true,
                 nickname: u.nickname,
                 fullname: `${u.first_name} ${u.last_name}`,
+                delete_at: u.delete_at,
+                isBot: u.is_bot,
+
+                // need name key for DM's as we use it for sortChannelsByDisplayName with same display_name
+                name: displayName,
             };
         });
 
@@ -244,7 +256,7 @@ class FilteredList extends Component {
         const userNotInDirectOrGroupChannels = Object.values(profilesToUse).filter((u) => directAndGroupChannelMembers.indexOf(u.id) === -1 && pastDirectMessages.indexOf(u.id) === -1 && u.id !== currentUserId);
 
         const members = userNotInDirectOrGroupChannels.map((u) => {
-            const displayName = displayUsername(u, teammateNameDisplay);
+            const displayName = displayUsername(u, teammateNameDisplay, false);
 
             return {
                 id: u.id,
@@ -257,6 +269,8 @@ class FilteredList extends Component {
                 fake: true,
                 nickname: u.nickname,
                 fullname: `${u.first_name} ${u.last_name}`,
+                delete_at: u.delete_at,
+                isBot: u.is_bot,
             };
         });
 
@@ -378,7 +392,6 @@ class FilteredList extends Component {
 
     render() {
         const {styles} = this.props;
-
         const {dataSource} = this.state;
 
         return (
@@ -386,12 +399,12 @@ class FilteredList extends Component {
                 style={styles.container}
             >
                 <FlatList
-                    ref='list'
                     data={dataSource}
                     renderItem={this.renderItem}
                     keyExtractor={(item) => item.id}
                     onViewableItemsChanged={this.updateUnreadIndicators}
-                    keyboardDismissMode='on-drag'
+                    {...this.keyboardDismissProp}
+                    keyboardShouldPersistTaps={'always'}
                     maxToRenderPerBatch={10}
                     viewabilityConfig={VIEWABILITY_CONFIG}
                 />

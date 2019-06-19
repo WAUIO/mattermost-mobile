@@ -57,11 +57,14 @@
         },
         {
           "current_key": "AIzaSyCtPgprkCaGk8lstL-Ug5zQEtZY8br43xk"
+        },
+        {
+          "current_key": "AIzaSyCkZkU2ECVg-mmdCG5OoHHQXtKiENuvWPE"
         }
       ],
       "services": {
         "analytics_service": {
-          "status": 1
+          "status": 2
         },
         "appinvite_service": {
           "status": 2,

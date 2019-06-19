@@ -6,6 +6,7 @@ import {
     ChannelTypes,
     FileTypes,
     PostTypes,
+    UserTypes,
 } from 'mattermost-redux/action_types';
 
 import {ViewTypes} from 'app/constants';
@@ -278,6 +279,25 @@ function postVisibility(state = {}, action) {
     }
 }
 
+function postCountInChannel(state = {}, action) {
+    switch (action.type) {
+    case ViewTypes.SET_INITIAL_POST_COUNT: {
+        const {channelId, count} = action.data;
+        const nextState = {...state};
+        nextState[channelId] = count;
+        return nextState;
+    }
+    case ViewTypes.INCREASE_POST_COUNT: {
+        const {channelId, count} = action.data;
+        const nextState = {...state};
+        nextState[channelId] += count;
+        return nextState;
+    }
+    default:
+        return state;
+    }
+}
+
 function loadingPosts(state = {}, action) {
     switch (action.type) {
     case ViewTypes.LOADING_POSTS: {
@@ -313,14 +333,71 @@ function loadMorePostsVisible(state = true, action) {
     }
 }
 
+function lastChannelViewTime(state = {}, action) {
+    switch (action.type) {
+    case ViewTypes.SELECT_CHANNEL_WITH_MEMBER: {
+        if (action.member) {
+            const nextState = {...state};
+            nextState[action.data] = action.member.last_viewed_at;
+            return nextState;
+        }
+        return state;
+    }
+
+    default:
+        return state;
+    }
+}
+
+function keepChannelIdAsUnread(state = null, action) {
+    switch (action.type) {
+    case ViewTypes.SELECT_CHANNEL_WITH_MEMBER: {
+        const member = action.member;
+        const channel = action.channel;
+
+        if (!member || !channel) {
+            return state;
+        }
+
+        const msgCount = channel.total_msg_count - member.msg_count;
+        const hadMentions = member.mention_count > 0;
+        const hadUnreads = member.notify_props.mark_unread !== ViewTypes.NotificationLevels.MENTION && msgCount > 0;
+
+        if (hadMentions || hadUnreads) {
+            return {
+                id: member.channel_id,
+                hadMentions,
+            };
+        }
+
+        return null;
+    }
+
+    case ViewTypes.RECEIVED_FOCUSED_POST: {
+        if (state && action.channelId !== state.id) {
+            return null;
+        }
+        return state;
+    }
+
+    case UserTypes.LOGOUT_SUCCESS:
+        return null;
+    default:
+        return state;
+    }
+}
+
 export default combineReducers({
     displayName,
     drafts,
     loading,
     refreshing,
+    postCountInChannel,
     postVisibility,
     loadingPosts,
     lastGetPosts,
     retryFailed,
     loadMorePostsVisible,
+    lastChannelViewTime,
+    keepChannelIdAsUnread,
 });

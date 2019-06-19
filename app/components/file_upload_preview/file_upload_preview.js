@@ -6,8 +6,11 @@ import PropTypes from 'prop-types';
 import {
     ScrollView,
     StyleSheet,
+    Text,
     View,
 } from 'react-native';
+
+import EventEmitter from 'mattermost-redux/utils/event_emitter';
 
 import FormattedText from 'app/components/formatted_text';
 
@@ -17,15 +20,31 @@ export default class FileUploadPreview extends PureComponent {
     static propTypes = {
         channelId: PropTypes.string.isRequired,
         channelIsLoading: PropTypes.bool,
-        createPostRequestStatus: PropTypes.string.isRequired,
         deviceHeight: PropTypes.number.isRequired,
         files: PropTypes.array.isRequired,
         filesUploadingForCurrentChannel: PropTypes.bool.isRequired,
-        inputHeight: PropTypes.number.isRequired,
         rootId: PropTypes.string,
-        showFileMaxWarning: PropTypes.bool.isRequired,
         theme: PropTypes.object.isRequired,
     };
+
+    static defaultProps = {
+        files: [],
+    };
+
+    state = {
+        fileSizeWarning: null,
+        showFileMaxWarning: false,
+    };
+
+    componentDidMount() {
+        EventEmitter.on('fileMaxWarning', this.handleFileMaxWarning);
+        EventEmitter.on('fileSizeWarning', this.handleFileSizeWarning);
+    }
+
+    componentWillUnmount() {
+        EventEmitter.off('fileMaxWarning', this.handleFileMaxWarning);
+        EventEmitter.off('fileSizeWarning', this.handleFileSizeWarning);
+    }
 
     buildFilePreviews = () => {
         return this.props.files.map((file) => {
@@ -41,15 +60,29 @@ export default class FileUploadPreview extends PureComponent {
         });
     };
 
+    handleFileMaxWarning = () => {
+        this.setState({showFileMaxWarning: true});
+        setTimeout(() => {
+            this.setState({showFileMaxWarning: false});
+        }, 3000);
+    };
+
+    handleFileSizeWarning = (message) => {
+        this.setState({fileSizeWarning: message});
+    };
+
     render() {
         const {
-            showFileMaxWarning,
             channelIsLoading,
             filesUploadingForCurrentChannel,
             deviceHeight,
             files,
         } = this.props;
-        if (channelIsLoading || (!files.length && !filesUploadingForCurrentChannel)) {
+        const {fileSizeWarning, showFileMaxWarning} = this.state;
+        if (
+            !fileSizeWarning && !showFileMaxWarning &&
+            (channelIsLoading || (!files.length && !filesUploadingForCurrentChannel))
+        ) {
             return null;
         }
 
@@ -60,6 +93,7 @@ export default class FileUploadPreview extends PureComponent {
                         horizontal={true}
                         style={style.scrollView}
                         contentContainerStyle={style.scrollViewContent}
+                        keyboardShouldPersistTaps={'handled'}
                     >
                         {this.buildFilePreviews()}
                     </ScrollView>
@@ -70,7 +104,11 @@ export default class FileUploadPreview extends PureComponent {
                             defaultMessage='Uploads limited to 5 files maximum.'
                         />
                     )}
-
+                    {Boolean(fileSizeWarning) &&
+                        <Text style={style.warning}>
+                            {fileSizeWarning}
+                        </Text>
+                    }
                 </View>
             </View>
         );

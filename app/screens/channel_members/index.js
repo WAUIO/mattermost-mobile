@@ -16,21 +16,20 @@ function makeMapStateToProps() {
     const getChannelMembers = makeGetProfilesInChannel();
 
     return (state) => {
-        const currentChannel = getCurrentChannel(state) || {};
+        const currentChannel = getCurrentChannel(state);
         let currentChannelMembers = [];
-        if (currentChannel) {
+        if (currentChannel.id) {
             currentChannelMembers = getChannelMembers(state, currentChannel.id, true);
         }
 
+        const canManageUsers = canManageChannelMembers(state) && !currentChannel.group_constrained;
+
         return {
-            theme: getTheme(state),
-            currentChannel,
+            canManageUsers,
+            currentChannelId: currentChannel.id,
             currentChannelMembers,
             currentUserId: state.entities.users.currentUserId,
-            requestStatus: state.requests.users.getProfilesInChannel.status,
-            searchRequestStatus: state.requests.users.searchProfiles.status,
-            removeMembersStatus: state.requests.channels.removeChannelMember.status,
-            canManageUsers: canManageChannelMembers(state),
+            theme: getTheme(state),
         };
     };
 }

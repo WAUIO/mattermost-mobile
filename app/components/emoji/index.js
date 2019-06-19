@@ -14,6 +14,7 @@ import {EmojiIndicesByAlias, Emojis} from 'app/utils/emojis';
 import Emoji from './emoji';
 
 function mapStateToProps(state, ownProps) {
+    const config = getConfig(state);
     const emojiName = ownProps.emojiName;
     const customEmojis = getCustomEmojisByName(state);
 
@@ -29,9 +30,11 @@ function mapStateToProps(state, ownProps) {
         isCustomEmoji = true;
     } else {
         displayTextOnly = state.entities.emojis.nonExistentEmoji.has(emojiName) ||
-            getConfig(state).EnableCustomEmoji !== 'true' ||
+            config.EnableCustomEmoji !== 'true' ||
+            config.ExperimentalEnablePostMetadata === 'true' ||
             getCurrentUserId(state) === '' ||
-            !isMinimumServerVersion(Client4.getServerVersion(), 4, 7);
+            !isMinimumServerVersion(Client4.getServerVersion(), 4, 7) ||
+            isMinimumServerVersion(Client4.getServerVersion(), 5, 12);
     }
 
     return {

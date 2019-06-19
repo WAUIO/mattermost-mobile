@@ -18,6 +18,11 @@ export default class OptionsModalList extends PureComponent {
     static propTypes = {
         items: PropTypes.array.isRequired,
         onCancelPress: PropTypes.func,
+        onItemPress: PropTypes.func,
+    };
+
+    static defaultProps = {
+        items: [],
     };
 
     handleCancelPress = preventDoubleTap(() => {
@@ -26,11 +31,25 @@ export default class OptionsModalList extends PureComponent {
         }
     });
 
+    handleItemPress = preventDoubleTap((action) => {
+        this.props.onItemPress();
+        setTimeout(() => {
+            if (typeof action === 'function') {
+                action();
+            }
+        }, 100);
+    });
+
     renderOptions = () => {
         const {items} = this.props;
 
         const options = items.map((item, index) => {
             let textComponent;
+            let optionIconStyle = style.optionIcon;
+            if (typeof item.iconStyle !== 'undefined') {
+                optionIconStyle = item.iconStyle;
+            }
+
             if (item.text.hasOwnProperty('id')) {
                 textComponent = (
                     <FormattedText
@@ -43,20 +62,24 @@ export default class OptionsModalList extends PureComponent {
             }
 
             return (
-                <TouchableOpacity
+                <View
                     key={index}
-                    onPress={preventDoubleTap(item.action)}
-                    style={[style.option, style.optionBorder]}
+                    style={style.optionBorder}
                 >
-                    {textComponent}
-                    {item.icon &&
+                    <TouchableOpacity
+                        onPress={() => this.handleItemPress(item.action)}
+                        style={style.option}
+                    >
+                        {textComponent}
+                        {item.icon &&
                         <IconFont
                             name={item.icon}
                             size={18}
-                            style={style.optionIcon}
+                            style={optionIconStyle}
                         />
-                    }
-                </TouchableOpacity>
+                        }
+                    </TouchableOpacity>
+                </View>
             );
         });
 

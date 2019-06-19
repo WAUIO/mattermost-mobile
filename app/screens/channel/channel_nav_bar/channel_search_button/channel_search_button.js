@@ -4,6 +4,7 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import {
+    Keyboard,
     TouchableOpacity,
     View,
 } from 'react-native';
@@ -12,34 +13,22 @@ import AwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {preventDoubleTap} from 'app/utils/tap';
 import {makeStyleSheetFromTheme} from 'app/utils/theme';
 
-const SEARCH = 'search';
-
 export default class ChannelSearchButton extends PureComponent {
     static propTypes = {
         actions: PropTypes.shape({
             clearSearch: PropTypes.func.isRequired,
-            handlePostDraftChanged: PropTypes.func.isRequired,
+            showSearchModal: PropTypes.func.isRequired,
         }).isRequired,
         navigator: PropTypes.object,
         theme: PropTypes.object,
     };
 
     handlePress = preventDoubleTap(async () => {
-        const {actions, navigator, theme} = this.props;
+        const {actions, navigator} = this.props;
 
+        Keyboard.dismiss();
         await actions.clearSearch();
-        actions.handlePostDraftChanged(SEARCH, '');
-
-        navigator.showModal({
-            screen: 'Search',
-            animated: true,
-            backButtonTitle: '',
-            overrideBackPress: true,
-            navigatorStyle: {
-                navBarHidden: true,
-                screenBackgroundColor: theme.centerChannelBg,
-            },
-        });
+        await actions.showSearchModal(navigator);
     });
 
     render() {

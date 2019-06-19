@@ -19,6 +19,7 @@ import {ListTypes, ViewTypes} from 'app/constants';
 import {preventDoubleTap} from 'app/utils/tap';
 import {changeOpacity, makeStyleSheetFromTheme} from 'app/utils/theme';
 import tracker from 'app/utils/time_tracker';
+import telemetry from 'app/telemetry';
 
 import TeamsListItem from './teams_list_item';
 
@@ -36,6 +37,7 @@ export default class TeamsList extends PureComponent {
         closeChannelDrawer: PropTypes.func.isRequired,
         currentTeamId: PropTypes.string.isRequired,
         currentUrl: PropTypes.string.isRequired,
+        hasOtherJoinableTeams: PropTypes.bool,
         navigator: PropTypes.object.isRequired,
         teamIds: PropTypes.array.isRequired,
         theme: PropTypes.object.isRequired,
@@ -54,9 +56,15 @@ export default class TeamsList extends PureComponent {
     }
 
     selectTeam = (teamId) => {
+        const {actions, closeChannelDrawer, currentTeamId} = this.props;
+
+        if (teamId !== currentTeamId) {
+            telemetry.reset();
+            telemetry.start(['team:switch']);
+        }
+
         StatusBar.setHidden(false, 'slide');
         requestAnimationFrame(() => {
-            const {actions, closeChannelDrawer, currentTeamId} = this.props;
             if (teamId !== currentTeamId) {
                 tracker.teamSwitch = Date.now();
                 actions.handleTeamChange(teamId);
@@ -109,34 +117,35 @@ export default class TeamsList extends PureComponent {
     };
 
     render() {
-        const {teamIds, theme} = this.props;
+        const {hasOtherJoinableTeams, teamIds, theme} = this.props;
         const styles = getStyleSheet(theme);
 
-        const moreAction = (
-            <TouchableHighlight
-                style={styles.moreActionContainer}
-                onPress={this.goToSelectTeam}
-                underlayColor={changeOpacity(theme.sidebarHeaderBg, 0.5)}
-            >
-                <Text
-                    style={styles.moreAction}
+        let moreAction;
+        if (hasOtherJoinableTeams) {
+            moreAction = (
+                <TouchableHighlight
+                    style={styles.moreActionContainer}
+                    onPress={this.goToSelectTeam}
+                    underlayColor={changeOpacity(theme.sidebarHeaderBg, 0.5)}
                 >
-                    {'+'}
-                </Text>
-            </TouchableHighlight>
-        );
+                    <Text
+                        style={styles.moreAction}
+                    >
+                        {'+'}
+                    </Text>
+                </TouchableHighlight>
+            );
+        }
 
         return (
             <View style={styles.container}>
-                <View style={styles.statusBar}>
-                    <View style={styles.headerContainer}>
-                        <FormattedText
-                            id='mobile.drawer.teamsTitle'
-                            defaultMessage='Teams'
-                            style={styles.header}
-                        />
-                        {moreAction}
-                    </View>
+                <View style={styles.headerContainer}>
+                    <FormattedText
+                        id='mobile.drawer.teamsTitle'
+                        defaultMessage='Teams'
+                        style={styles.header}
+                    />
+                    {moreAction}
                 </View>
                 <FlatList
                     data={teamIds}
@@ -155,12 +164,9 @@ const getStyleSheet = makeStyleSheetFromTheme((theme) => {
             backgroundColor: theme.sidebarBg,
             flex: 1,
         },
-        statusBar: {
-            backgroundColor: theme.sidebarHeaderBg,
-        },
         headerContainer: {
             alignItems: 'center',
-            backgroundColor: theme.sidebarHeaderBg,
+            backgroundColor: theme.sidebarBg,
             flexDirection: 'row',
             borderBottomWidth: 1,
             borderBottomColor: changeOpacity(theme.sidebarHeaderTextColor, 0.10),

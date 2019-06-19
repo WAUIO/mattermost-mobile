@@ -8,8 +8,10 @@ import {
     Platform,
     View,
 } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
 
+import EventEmitter from 'mattermost-redux/utils/event_emitter';
+
+import {DeviceTypes} from 'app/constants';
 import {changeOpacity, makeStyleSheetFromTheme} from 'app/utils/theme';
 
 import AtMention from './at_mention';
@@ -20,14 +22,17 @@ import DateSuggestion from './date_suggestion';
 
 export default class Autocomplete extends PureComponent {
     static propTypes = {
-        cursorPosition: PropTypes.number.isRequired,
+        cursorPosition: PropTypes.number,
         deviceHeight: PropTypes.number,
         onChangeText: PropTypes.func.isRequired,
+        maxHeight: PropTypes.number,
         rootId: PropTypes.string,
         isSearch: PropTypes.bool,
         theme: PropTypes.object.isRequired,
         value: PropTypes.string,
         enableDateSuggestion: PropTypes.bool.isRequired,
+        valueEvent: PropTypes.string,
+        cursorPositionEvent: PropTypes.string,
     };
 
     static defaultProps = {
@@ -36,13 +41,66 @@ export default class Autocomplete extends PureComponent {
         enableDateSuggestion: false,
     };
 
-    state = {
-        atMentionCount: 0,
-        channelMentionCount: 0,
-        emojiCount: 0,
-        commandCount: 0,
-        dateCount: 0,
-        keyboardOffset: 0,
+    static getDerivedStateFromProps(props, state) {
+        const nextState = {};
+        let updated = false;
+
+        if (props.cursorPosition !== state.cursorPosition && !props.cursorPositionEvent) {
+            nextState.cursorPosition = props.cursorPosition;
+            updated = true;
+        }
+
+        if (props.value !== state.value && !props.valueEvent) {
+            nextState.value = props.value;
+            updated = true;
+        }
+
+        return updated ? nextState : null;
+    }
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            atMentionCount: 0,
+            channelMentionCount: 0,
+            cursorPosition: props.cursorPosition,
+            emojiCount: 0,
+            commandCount: 0,
+            dateCount: 0,
+            keyboardOffset: 0,
+            value: props.value,
+        };
+    }
+
+    componentDidMount() {
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow);
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
+
+        if (this.props.valueEvent) {
+            EventEmitter.on(this.props.valueEvent, this.handleValueChange);
+        }
+
+        if (this.props.cursorPositionEvent) {
+            EventEmitter.on(this.props.cursorPositionEvent, this.handleCursorPositionChange);
+        }
+    }
+
+    componentWillUnmount() {
+        this.keyboardDidShowListener.remove();
+        this.keyboardDidHideListener.remove();
+
+        if (this.props.valueEvent) {
+            EventEmitter.off(this.props.valueEvent, this.handleValueChange);
+        }
+
+        if (this.props.cursorPositionEvent) {
+            EventEmitter.off(this.props.cursorPositionEvent, this.handleCursorPositionChange);
+        }
+    }
+
+    onChangeText = (value) => {
+        this.props.onChangeText(value, true);
     };
 
     handleAtMentionCountChange = (atMentionCount) => {
@@ -51,6 +109,10 @@ export default class Autocomplete extends PureComponent {
 
     handleChannelMentionCountChange = (channelMentionCount) => {
         this.setState({channelMentionCount});
+    };
+
+    handleCursorPositionChange = (cursorPosition) => {
+        this.setState({cursorPosition});
     };
 
     handleEmojiCountChange = (emojiCount) => {
@@ -65,15 +127,9 @@ export default class Autocomplete extends PureComponent {
         this.setState({dateCount});
     };
 
-    componentWillMount() {
-        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow);
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
-    }
-
-    componentWillUnmount() {
-        this.keyboardDidShowListener.remove();
-        this.keyboardDidHideListener.remove();
-    }
+    handleValueChange = (value) => {
+        this.setState({value});
+    };
 
     keyboardDidShow = (e) => {
         const {height} = e.endCoordinates;
@@ -84,12 +140,21 @@ export default class Autocomplete extends PureComponent {
         this.setState({keyboardOffset: 0});
     };
 
-    listHeight() {
-        let offset = Platform.select({ios: 65, android: 75});
-        if (DeviceInfo.getModel() === 'iPhone X') {
-            offset = 90;
+    maxListHeight() {
+        let maxHeight;
+        if (this.props.maxHeight) {
+            maxHeight = this.props.maxHeight;
+        } else {
+            // List is expanding downwards, likely from the search box
+            let offset = Platform.select({ios: 65, android: 75});
+            if (DeviceTypes.IS_IPHONE_X) {
+                offset = 90;
+            }
+
+            maxHeight = this.props.deviceHeight - offset - this.state.keyboardOffset;
         }
-        return this.props.deviceHeight - offset - this.state.keyboardOffset;
+
+        return maxHeight;
     }
 
     render() {
@@ -105,7 +170,7 @@ export default class Autocomplete extends PureComponent {
         }
 
         // We always need to render something, but we only draw the borders when we have results to show
-        const {atMentionCount, channelMentionCount, emojiCount, commandCount, dateCount} = this.state;
+        const {atMentionCount, channelMentionCount, emojiCount, commandCount, dateCount, cursorPosition, value} = this.state;
         if (atMentionCount + channelMentionCount + emojiCount + commandCount + dateCount > 0) {
             if (this.props.isSearch) {
                 wrapperStyle.push(style.bordersSearch);
@@ -113,33 +178,50 @@ export default class Autocomplete extends PureComponent {
                 containerStyle.push(style.borders);
             }
         }
-        const listHeight = this.listHeight();
+
+        const maxListHeight = this.maxListHeight();
 
         return (
             <View style={wrapperStyle}>
                 <View style={containerStyle}>
                     <AtMention
-                        listHeight={listHeight}
-                        onResultCountChange={this.handleAtMentionCountChange}
                         {...this.props}
+                        cursorPosition={cursorPosition}
+                        maxListHeight={maxListHeight}
+                        onChangeText={this.onChangeText}
+                        onResultCountChange={this.handleAtMentionCountChange}
+                        value={value || ''}
                     />
                     <ChannelMention
-                        listHeight={listHeight}
-                        onResultCountChange={this.handleChannelMentionCountChange}
                         {...this.props}
+                        cursorPosition={cursorPosition}
+                        maxListHeight={maxListHeight}
+                        onChangeText={this.onChangeText}
+                        onResultCountChange={this.handleChannelMentionCountChange}
+                        value={value || ''}
                     />
                     <EmojiSuggestion
-                        onResultCountChange={this.handleEmojiCountChange}
                         {...this.props}
+                        cursorPosition={cursorPosition}
+                        maxListHeight={maxListHeight}
+                        onChangeText={this.onChangeText}
+                        onResultCountChange={this.handleEmojiCountChange}
+                        value={value || ''}
                     />
                     <SlashSuggestion
-                        onResultCountChange={this.handleCommandCountChange}
                         {...this.props}
+                        maxListHeight={maxListHeight}
+                        onChangeText={this.onChangeText}
+                        onResultCountChange={this.handleCommandCountChange}
+                        value={value || ''}
                     />
                     {(this.props.isSearch && this.props.enableDateSuggestion) &&
                     <DateSuggestion
-                        onResultCountChange={this.handleIsDateFilterChange}
                         {...this.props}
+                        cursorPosition={cursorPosition}
+                        onChangeText={this.onChangeText}
+                        onResultCountChange={this.handleIsDateFilterChange}
+                        value={value || ''}
                     />
                     }
                 </View>
@@ -167,7 +249,6 @@ const getStyleFromTheme = makeStyleSheetFromTheme((theme) => {
         },
         container: {
             bottom: 0,
-            maxHeight: 200,
         },
         content: {
             flex: 1,

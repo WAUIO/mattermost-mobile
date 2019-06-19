@@ -2,14 +2,21 @@
 // See LICENSE.txt for license information.
 
 import React from 'react';
-import {configure} from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
-configure({adapter: new Adapter()});
+
+import Preferences from 'mattermost-redux/constants/preferences';
 
 import {shallowWithIntl} from 'test/intl-test-helper';
 import {emptyFunction} from 'app/utils/general';
 
+import RadioButtonGroup from 'app/components/radio_button';
+
 import NotificationSettingsEmailAndroid from './notification_settings_email.android.js';
+
+jest.mock('Platform', () => {
+    const Platform = require.requireActual('Platform');
+    Platform.OS = 'android';
+    return Platform;
+});
 
 describe('NotificationSettingsEmailAndroid', () => {
     const baseProps = {
@@ -23,10 +30,7 @@ describe('NotificationSettingsEmailAndroid', () => {
         },
         sendEmailNotifications: true,
         siteName: 'Mattermost',
-        theme: {
-            centerChannelBg: '#aaa',
-            centerChannelColor: '#aaa',
-        },
+        theme: Preferences.THEMES.default,
     };
 
     test('should match snapshot', () => {
@@ -52,19 +56,42 @@ describe('NotificationSettingsEmailAndroid', () => {
         expect(wrapper.instance().renderEmailNotificationsModal(style)).toMatchSnapshot();
     });
 
-    test('should match state on setEmailNotifications', () => {
+    test('should match state on setEmailInterval', () => {
         const wrapper = shallowWithIntl(
             <NotificationSettingsEmailAndroid {...baseProps}/>
         );
 
+        wrapper.setState({interval: '0'});
+        wrapper.instance().setEmailInterval('30');
+        expect(wrapper.state({interval: '30'}));
+
+        wrapper.instance().setEmailInterval('0');
+        expect(wrapper.state({interval: '0'}));
+
+        wrapper.instance().setEmailInterval('3600');
+        expect(wrapper.state({interval: '3600'}));
+    });
+
+    test('should match state on select of RadioButtonGroup', () => {
+        const wrapper = shallowWithIntl(
+            <NotificationSettingsEmailAndroid
+                {...baseProps}
+                sendEmailNotifications={false}
+            />
+        );
+        expect(wrapper.find(RadioButtonGroup).exists()).toBe(false);
+        wrapper.setProps({sendEmailNotifications: true});
+        expect(wrapper.find(RadioButtonGroup).exists()).toBe(true);
+
         wrapper.setState({email: 'false', interval: '0'});
-        wrapper.instance().setEmailNotifications('30');
+
+        wrapper.find(RadioButtonGroup).first().prop('onSelect')('30');
         expect(wrapper.state({email: 'true', interval: '30'}));
 
-        wrapper.instance().setEmailNotifications('0');
+        wrapper.find(RadioButtonGroup).first().prop('onSelect')('0');
         expect(wrapper.state({email: 'false', interval: '0'}));
 
-        wrapper.instance().setEmailNotifications('3600');
+        wrapper.find(RadioButtonGroup).first().prop('onSelect')('3600');
         expect(wrapper.state({email: 'true', interval: '3600'}));
     });
 
@@ -119,13 +146,21 @@ describe('NotificationSettingsEmailAndroid', () => {
         expect(wrapper.state('showEmailNotificationsModal')).toEqual(true);
     });
 
-    test('should match state on handleChange', () => {
+    test('should not save preference on back button on Android', () => {
         const wrapper = shallowWithIntl(
             <NotificationSettingsEmailAndroid {...baseProps}/>
         );
 
-        wrapper.setState({newInterval: '3600'});
-        wrapper.instance().handleChange('30');
-        expect(wrapper.state('newInterval')).toEqual('30');
+        const instance = wrapper.instance();
+        instance.saveEmailNotifyProps = jest.fn();
+
+        // should not save preference on back button on Android
+        // saving email preference on Android is done via Save button
+        instance.onNavigatorEvent({type: 'ScreenChangedEvent', id: 'willDisappear'});
+        expect(instance.saveEmailNotifyProps).toHaveBeenCalledTimes(0);
+
+        wrapper.setState({newInterval: '0'});
+        instance.onNavigatorEvent({type: 'ScreenChangedEvent', id: 'willDisappear'});
+        expect(instance.saveEmailNotifyProps).toHaveBeenCalledTimes(0);
     });
 });

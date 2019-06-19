@@ -51,7 +51,7 @@ export default class LongPost extends PureComponent {
         inThreadView: PropTypes.bool,
         managedConfig: PropTypes.object,
         navigator: PropTypes.object,
-        onAddReaction: PropTypes.func,
+        onHashtagPress: PropTypes.func,
         onPermalinkPress: PropTypes.func,
         postId: PropTypes.string.isRequired,
         theme: PropTypes.object.isRequired,
@@ -76,7 +76,7 @@ export default class LongPost extends PureComponent {
         const channelId = post.channel_id;
         const rootId = (post.root_id || post.id);
 
-        actions.loadThreadIfNecessary(rootId, channelId);
+        actions.loadThreadIfNecessary(rootId);
         actions.selectPost(rootId);
 
         const options = {
@@ -140,7 +140,6 @@ export default class LongPost extends PureComponent {
                 <View style={style.attachments}>
                     <FileAttachmentList
                         fileIds={fileIds}
-                        hideOptionsContext={emptyFunction}
                         isFailed={false}
                         onLongPress={emptyFunction}
                         postId={postId}
@@ -154,7 +153,7 @@ export default class LongPost extends PureComponent {
     }
 
     renderReactions = (style) => {
-        const {hasReactions, postId, onAddReaction} = this.props;
+        const {hasReactions, navigator, postId} = this.props;
 
         if (!hasReactions) {
             return null;
@@ -163,9 +162,9 @@ export default class LongPost extends PureComponent {
         return (
             <View style={style.reactions}>
                 <Reactions
+                    navigator={navigator}
                     position='left'
                     postId={postId}
-                    onAddReaction={onAddReaction}
                 />
             </View>
         );
@@ -178,6 +177,7 @@ export default class LongPost extends PureComponent {
             hasReactions,
             managedConfig,
             navigator,
+            onHashtagPress,
             onPermalinkPress,
             postId,
             theme,
@@ -239,6 +239,7 @@ export default class LongPost extends PureComponent {
                                 onPress={this.handlePress}
                                 isSearchResult={false}
                                 showLongPost={true}
+                                onHashtagPress={onHashtagPress}
                                 onPermalinkPress={onPermalinkPress}
                                 navigator={navigator}
                                 managedConfig={managedConfig}

@@ -381,21 +381,21 @@ export default class Login extends PureComponent {
             );
         }
 
-        let forgotPassword;
-        if (this.props.config.EnableSignInWithEmail === 'true' || this.props.config.EnableSignInWithUsername === 'true') {
-            forgotPassword = (
-                <Button
-                    onPress={this.forgotPassword}
-                    containerStyle={[style.forgotPasswordBtn]}
-                >
-                    <FormattedText
-                        id='login.forgot'
-                        defaultMessage='I forgot my password'
-                        style={style.forgotPasswordTxt}
-                    />
-                </Button>
-            );
-        }
+        // let forgotPassword;
+        // if (this.props.config.EnableSignInWithEmail === 'true' || this.props.config.EnableSignInWithUsername === 'true') {
+        //     forgotPassword = (
+        //         <Button
+        //             onPress={this.forgotPassword}
+        //             containerStyle={[style.forgotPasswordBtn]}
+        //         >
+        //             <FormattedText
+        //                 id='login.forgot'
+        //                 defaultMessage='I forgot my password'
+        //                 style={style.forgotPasswordTxt}
+        //             />
+        //         </Button>
+        //     );
+        // }
 
         return (
             <View style={style.container}>

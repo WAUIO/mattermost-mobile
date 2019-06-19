@@ -1,4 +1,4 @@
-// Copyright (c) 2015-present WAU Chat, Inc. All Rights Reserved.
+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
 import React, {PureComponent} from 'react';
@@ -16,7 +16,6 @@ import SettingsItem from 'app/screens/settings/settings_item';
 import StatusBar from 'app/components/status_bar';
 import {preventDoubleTap} from 'app/utils/tap';
 import {changeOpacity, makeStyleSheetFromTheme, setNavigatorStyles} from 'app/utils/theme';
-import {isValidUrl} from 'app/utils/url';
 import {t} from 'app/utils/i18n';
 
 import LocalConfig from 'assets/config';
@@ -221,7 +220,6 @@ class Settings extends PureComponent {
         const {joinableTeams, theme} = this.props;
         const style = getStyleSheet(theme);
         const showTeams = joinableTeams.length > 0;
-        const showHelp = isValidUrl(config.HelpLink);
         const showArrow = Platform.OS === 'ios';
 
         return (

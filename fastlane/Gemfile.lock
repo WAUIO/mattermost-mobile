@@ -179,7 +179,7 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk-s3
-  fastlane (= 2.107.0)
+  fastlane (= 2.125.2)
   fastlane-plugin-android_change_package_identifier
   fastlane-plugin-android_change_string_app_name
   fastlane-plugin-find_replace_string
@@ -187,4 +187,4 @@ DEPENDENCIES
   nokogiri
 
 BUNDLED WITH
-   2.0.1
+   2.0.2

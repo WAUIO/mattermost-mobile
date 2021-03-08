@@ -70,6 +70,9 @@ Navigation.setLazyComponentRegistrator((screenName) => {
     case 'CreateChannel':
         screen = require('@screens/create_channel').default;
         break;
+    case 'CreateAccountWebView':
+        screen = require('@screens/create').default;
+        break;
     case 'DisplaySettings':
         screen = require('@screens/settings/display_settings').default;
         break;

@@ -21,7 +21,8 @@ import SettingsItem from '@screens/settings/settings_item';
 import {t} from '@utils/i18n';
 import {preventDoubleTap} from '@utils/tap';
 import {changeOpacity, makeStyleSheetFromTheme} from '@utils/theme';
-import {isValidUrl, tryOpenURL} from '@utils/url';
+// import {isValidUrl, tryOpenURL} from '@utils/url';
+import {tryOpenURL} from '@utils/url';
 
 class Settings extends PureComponent {
     static propTypes = {
@@ -183,7 +184,8 @@ class Settings extends PureComponent {
         const {config, joinableTeams, theme} = this.props;
         const style = getStyleSheet(theme);
         const showTeams = joinableTeams.length > 0;
-        const showHelp = isValidUrl(config.HelpLink);
+        // const showHelp = isValidUrl(config.HelpLink);
+        const showHelp = false;
 
         let showArrow = false;
         let middleDividerStyle = style.divider;

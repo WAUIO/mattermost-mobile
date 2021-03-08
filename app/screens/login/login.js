@@ -160,10 +160,19 @@ export default class Login extends PureComponent {
     forgotPassword = () => {
         const {intl} = this.context;
         const screen = 'ForgotPassword';
-        const title = intl.formatMessage({id: 'password_form.title', defaultMessage: 'Password Reset'});
+        const title = intl.formatMessage({id: 'login.forgot', defaultMessage: 'Forgot your password'});
 
         goToScreen(screen, title);
-    }
+    };
+
+    goToCreateAccount = () => {
+        const {intl} = this.context;
+        const screen = 'CreateAccountWebView';
+        const title = intl.formatMessage({id: 'signup_user_completed.create', defaultMessage: 'Create an Account'});
+
+        goToScreen(screen, title);
+
+    };
 
     getLoginErrorMessage = (error) => {
         return (
@@ -298,7 +307,7 @@ export default class Login extends PureComponent {
             this.loginRef.current.setNativeProps({text: managedConfig.username});
             this.loginId = managedConfig.username;
         }
-    }
+    };
 
     signIn = async () => {
         const {actions} = this.props;
@@ -367,6 +376,22 @@ export default class Login extends PureComponent {
             );
         }
 
+        let goToCreateAccount;
+        if (this.props.config.EnableSignInWithEmail === 'true' || this.props.config.EnableSignInWithUsername === 'true') {
+            goToCreateAccount = (
+                <Button
+                    onPress={this.goToCreateAccount}
+                    containerStyle={[style.createAccountBtn]}
+                >
+                    <FormattedText
+                        id='login.noAccount'
+                        defaultMessage="Don't have an account?"
+                        style={style.forgotPasswordTxt}
+                    />
+                </Button>
+            )
+        }
+
         return (
             <SafeAreaView style={style.container}>
                 <StatusBar/>
@@ -432,6 +457,7 @@ export default class Login extends PureComponent {
                         />
                         {proceed}
                         {forgotPassword}
+                        {goToCreateAccount}
                     </KeyboardAwareScrollView>
                 </TouchableWithoutFeedback>
             </SafeAreaView>
@@ -456,5 +482,10 @@ const style = StyleSheet.create({
     },
     forgotPasswordTxt: {
         color: '#2389D7',
+    },
+    createAccountBtn: {
+        borderColor: 'transparent',
+        marginTop: 15,
+        marginBottom: 30,
     },
 });

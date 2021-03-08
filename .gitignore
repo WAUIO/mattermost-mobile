@@ -101,3 +101,6 @@ detox/artifacts
 
 #editor-settings
 .vscode
+
+# build folder
+android/app/src/main/java/com/wau/

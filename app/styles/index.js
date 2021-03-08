@@ -35,7 +35,7 @@ export const GlobalStyles = StyleSheet.create({
     },
     signupButton: {
         borderRadius: 3,
-        borderColor: '#2389D7',
+        borderColor: '#217d95',
         borderWidth: 1,
         alignItems: 'center',
         alignSelf: 'stretch',
@@ -44,7 +44,7 @@ export const GlobalStyles = StyleSheet.create({
     },
     signupButtonText: {
         textAlign: 'center',
-        color: '#2389D7',
+        color: '#217d95',
         fontSize: 17,
     },
     buttonListItemText: {
@@ -108,5 +108,20 @@ export const GlobalStyles = StyleSheet.create({
         alignSelf: 'stretch',
         borderRadius: 3,
         color: '#3d3c40',
+    },
+
+    forgotPasswordBtn: {
+        borderColor: 'transparent',
+        marginTop: 15,
+    },
+
+    forgotPasswordTxt: {
+        color: '#217d95',
+    },
+
+    createAccountBtn: {
+        borderColor: 'transparent',
+        marginTop: 15,
+        marginBottom: 30,
     },
 });

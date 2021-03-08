@@ -171,7 +171,6 @@ export default class Login extends PureComponent {
         const title = intl.formatMessage({id: 'signup_user_completed.create', defaultMessage: 'Create an Account'});
 
         goToScreen(screen, title);
-
     };
 
     getLoginErrorMessage = (error) => {
@@ -349,12 +348,16 @@ export default class Login extends PureComponent {
                 <Button
                     testID='login.signin.button'
                     onPress={this.preSignIn}
-                    containerStyle={[GlobalStyles.signupButton, additionalStyle]}
+                    containerStyle={[GlobalStyles.signupButton]}
+
+                    // containerStyle={[GlobalStyles.signupButton, additionalStyle]}
                 >
                     <FormattedText
                         id='login.signIn'
                         defaultMessage='Sign in'
-                        style={[GlobalStyles.signupButtonText, additionalTextStyle]}
+                        style={[GlobalStyles.signupButtonText]}
+
+                        // style={[GlobalStyles.signupButtonText, additionalTextStyle]}
                     />
                 </Button>
             );
@@ -365,12 +368,12 @@ export default class Login extends PureComponent {
             forgotPassword = (
                 <Button
                     onPress={this.forgotPassword}
-                    containerStyle={[style.forgotPasswordBtn]}
+                    containerStyle={[GlobalStyles.forgotPasswordBtn]}
                 >
                     <FormattedText
                         id='login.forgot'
                         defaultMessage='I forgot my password'
-                        style={style.forgotPasswordTxt}
+                        style={[GlobalStyles.forgotPasswordTxt]}
                     />
                 </Button>
             );
@@ -381,15 +384,15 @@ export default class Login extends PureComponent {
             goToCreateAccount = (
                 <Button
                     onPress={this.goToCreateAccount}
-                    containerStyle={[style.createAccountBtn]}
+                    containerStyle={[GlobalStyles.createAccountBtn]}
                 >
                     <FormattedText
                         id='login.noAccount'
                         defaultMessage="Don't have an account?"
-                        style={style.forgotPasswordTxt}
+                        style={[GlobalStyles.forgotPasswordTxt]}
                     />
                 </Button>
-            )
+            );
         }
 
         return (
@@ -475,17 +478,5 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         paddingHorizontal: 15,
         paddingVertical: 50,
-    },
-    forgotPasswordBtn: {
-        borderColor: 'transparent',
-        marginTop: 15,
-    },
-    forgotPasswordTxt: {
-        color: '#2389D7',
-    },
-    createAccountBtn: {
-        borderColor: 'transparent',
-        marginTop: 15,
-        marginBottom: 30,
     },
 });

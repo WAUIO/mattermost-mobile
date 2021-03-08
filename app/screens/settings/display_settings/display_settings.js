@@ -129,7 +129,7 @@ export default class DisplaySettings extends PureComponent {
                 <View style={style.wrapper}>
                     <View style={style.divider}/>
                     {sidebar}
-                    {enableTheme && (
+                    {/*enableTheme && (
                         <SettingsItem
                             defaultMessage='Theme'
                             i18nId='mobile.display_settings.theme'
@@ -139,7 +139,7 @@ export default class DisplaySettings extends PureComponent {
                             showArrow={showArrow}
                             theme={theme}
                         />
-                    )}
+                    )*/}
                     <SettingsItem
                         defaultMessage='Clock Display'
                         i18nId='mobile.advanced_settings.clockDisplay'

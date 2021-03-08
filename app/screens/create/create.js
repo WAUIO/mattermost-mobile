@@ -3,7 +3,8 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import {intlShape} from 'react-intl';
-import {WebView, Alert} from 'react-native';
+import {Alert} from 'react-native';
+import WebView from 'react-native-webview';
 
 export default class CreateAccountWebView extends PureComponent {
     static propTypes = {

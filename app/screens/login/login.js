@@ -325,10 +325,19 @@ export default class Login extends PureComponent {
         let proceed;
         if (isLoading) {
             proceed = (
-                <ActivityIndicator
-                    animating={true}
-                    size='small'
-                />
+                <Button
+                    containerStyle={[GlobalStyles.signupButton]}
+
+                    // containerStyle={[GlobalStyles.signupButton, additionalStyle]}
+                >
+                    <FormattedText
+                        id='login.signInLoading'
+                        defaultMessage='Sign in...'
+                        style={[GlobalStyles.signupButtonText]}
+
+                        // style={[GlobalStyles.signupButtonText, additionalTextStyle]}
+                    />
+                </Button>
             );
         } else {
             const additionalStyle = {};

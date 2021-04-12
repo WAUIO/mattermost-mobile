@@ -1,27 +1,30 @@
 {
   "project_info": {
-    "project_number": "184930218130",
-    "firebase_url": "https://api-7231322553409637977-752355.firebaseio.com",
-    "project_id": "api-7231322553409637977-752355",
-    "storage_bucket": "api-7231322553409637977-752355.appspot.com"
+    "project_number": "87242000984",
+    "firebase_url": "https://wau-chat.firebaseio.com",
+    "project_id": "wau-chat",
+    "storage_bucket": "wau-chat.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:184930218130:android:a0e553d1a1f043b5",
+        "mobilesdk_app_id": "1:87242000984:android:c85e2a3702a47f77",
         "android_client_info": {
           "package_name": "com.mattermost.react.native"
         }
       },
       "oauth_client": [
         {
-          "client_id": "184930218130-8nahrspll1opff0uogtkh2qsv8coqngo.apps.googleusercontent.com",
+          "client_id": "87242000984-u9e9nvsq2tfumksntvotrln76079v1el.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCkZkU2ECVg-mmdCG5OoHHQXtKiENuvWPE"
+          "current_key": "AIzaSyDb_vFAtU-7ulQGeQu9mJAxTTpIwEV77Fw"
+        },
+        {
+          "current_key": "AIzaSyCtPgprkCaGk8lstL-Ug5zQEtZY8br43xk"
         }
       ],
       "services": {
@@ -30,7 +33,12 @@
         },
         "appinvite_service": {
           "status": 1,
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "87242000984-u9e9nvsq2tfumksntvotrln76079v1el.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
@@ -39,7 +47,7 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:184930218130:android:c7debfa7ea3f75a7",
+        "mobilesdk_app_id": "1:87242000984:android:c85e2a3702a47f77",
         "android_client_info": {
           "package_name": "com.mattermost.rnbeta"
         }
@@ -52,7 +60,10 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCkZkU2ECVg-mmdCG5OoHHQXtKiENuvWPE"
+          "current_key": "AIzaSyDb_vFAtU-7ulQGeQu9mJAxTTpIwEV77Fw"
+        },
+        {
+          "current_key": "AIzaSyCtPgprkCaGk8lstL-Ug5zQEtZY8br43xk"
         }
       ],
       "services": {
@@ -70,7 +81,7 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:184930218130:android:2db4058a5b5d6506",
+        "mobilesdk_app_id": "1:87242000984:android:c85e2a3702a47f77",
         "android_client_info": {
           "package_name": "com.mattermost.rn"
         }
@@ -83,7 +94,10 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCkZkU2ECVg-mmdCG5OoHHQXtKiENuvWPE"
+          "current_key": "AIzaSyDb_vFAtU-7ulQGeQu9mJAxTTpIwEV77Fw"
+        },
+        {
+          "current_key": "AIzaSyCtPgprkCaGk8lstL-Ug5zQEtZY8br43xk"
         }
       ],
       "services": {

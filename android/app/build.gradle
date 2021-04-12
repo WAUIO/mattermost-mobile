@@ -79,19 +79,20 @@ project.ext.react = [
     bundleConfig: "metro.config.js",
     bundleCommand: "ram-bundle",
     enableHermes: false,
+    nodeExecutableAndArgs : ["/usr/local/bin/node12"]
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
-if (System.getenv("SENTRY_ENABLED") == "true") {
+/*if (System.getenv("SENTRY_ENABLED") == "true") {
     project.ext.sentryCli = [
         logLevel: "error",
         flavorAware: false
     ]
 
     apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
-}
+}*/
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -139,12 +140,12 @@ android {
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     signingConfigs {
-        release {
-            if (project.hasProperty('MATTERMOST_RELEASE_STORE_FILE')) {
-                storeFile file(MATTERMOST_RELEASE_STORE_FILE)
-                storePassword MATTERMOST_RELEASE_PASSWORD
-                keyAlias MATTERMOST_RELEASE_KEY_ALIAS
-                keyPassword MATTERMOST_RELEASE_PASSWORD
+        signingConfigs {
+            release {
+                storeFile file('wau_chat_dev.keystore')
+                storePassword 'ainatest'
+                keyAlias 'wau_chat_dev'
+                keyPassword 'ainatest'
             }
         }
     }

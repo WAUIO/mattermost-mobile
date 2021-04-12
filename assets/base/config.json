@@ -1,15 +1,15 @@
 {
-    "DefaultServerUrl": "",
+    "DefaultServerUrl": "https://wau.chat",
     "TestServerUrl": "http://localhost:8065",
     "DefaultTheme": "default",
     "ShowErrorsList": false,
     "MinServerVersion": "4.0.0",
-    "EELearnURL": "about.mattermost.com",
-    "TeamEditionLearnURL": "mattermost.org",
-    "AboutTeamURL": "http://www.mattermost.org/",
-    "AboutEnterpriseURL": "http://about.mattermost.com/",
-    "PlatformNoticeURL": "https://about.mattermost.com/platform-notice-txt/",
-    "MobileNoticeURL": "https://about.mattermost.com/mobile-notice-txt/",
+    "EELearnURL": "about.wau-chat.com",
+    "TeamEditionLearnURL": "wau-chat.org",
+    "AboutTeamURL": "http://www.wau-chat.org/",
+    "AboutEnterpriseURL": "http://about.wau-chat.com/",
+    "PlatformNoticeURL": "https://about.wau-chat.com/platform-notice-txt/",
+    "MobileNoticeURL": "https://about.wau-chat.com/mobile-notice-txt/",
     "RudderApiKey": "",
 
     "HideEmailLoginExperimental": false,
@@ -31,13 +31,13 @@
 
     "ExperimentalNormalizeMarkdownLinks": false,
 
-    "AutoSelectServerUrl": false,
+    "AutoSelectServerUrl": true,
 
     "EnableMobileClientUpgrade": false,
     "EnableMobileClientUpgradeUserSetting": false,
     "EnableForceMobileClientUpgrade": false,
-    "MobileClientUpgradeAndroidApkLink": "https://about.mattermost.com/mattermost-android-app/",
-    "MobileClientUpgradeIosIpaLink": "https://about.mattermost.com/mattermost-ios-app/",
+    "MobileClientUpgradeAndroidApkLink": "https://about.wau-chat.com/wau-chat-android-app/",
+    "MobileClientUpgradeIosIpaLink": "https://about.wau-chat.com/wau-chat-ios-app/",
 
     "ShowSentryDebugOptions": false,
 

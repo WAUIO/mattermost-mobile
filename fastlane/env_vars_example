@@ -4,8 +4,8 @@
 export BRANCH_TO_BUILD=master
 export GIT_LOCAL_BRANCH=build
 
-export APP_NAME="Mattermost Beta"
-export APP_SCHEME=mattermost
+export APP_NAME="WAU Chat"
+export APP_SCHEME=wau_chat
 
 #export INCREMENT_BUILD_NUMBER=false
 ## This sets the version number ex: 1.22.0 if not set it uses the one in the code base

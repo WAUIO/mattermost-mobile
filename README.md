@@ -21,7 +21,7 @@ To help with testing app updates before they're released, you can:
 1. Sign up to be a beta tester
    - [Android](https://play.google.com/apps/testing/com.mattermost.rnbeta)
    - [iOS](https://testflight.apple.com/join/Q7Rx7K9P) - Open this link from your iOS device
-2. Install the `Mattermost Beta` app. New updates in the Beta app are released periodically. You will receive a notification when the new updates are available.
+2. Install the `WAU Chat` app. New updates in the Beta app are released periodically. You will receive a notification when the new updates are available.
 3. File any bugs you find by filing a [GitHub issue](https://github.com/mattermost/mattermost-mobile/issues) with:
    - Device information
    - Repro steps
@@ -32,7 +32,7 @@ To help with testing app updates before they're released, you can:
    
 You can leave the Beta testing program at any time:
 - On Android, [click this link](https://play.google.com/apps/testing/com.mattermost.rnbeta) while logged in with your Google Play email address used to opt-in for the Beta program, then click **Leave the program**. 
-- On iOS, access the `Mattermost Beta` app page in TestFlight and click **Stop Testing**.
+- On iOS, access the `WAU Chat` app page in TestFlight and click **Stop Testing**.
 
 ### Contribute Code 
 
@@ -53,7 +53,7 @@ App data is wiped from the device when a user logs out of the app. If the user i
 
 At the moment, we only support connecting to one server at a time. If you need to connect to multiple servers, please [upvote the feature request](https://mattermost.uservoice.com/forums/306457/suggestions/10975938) so we can track demand for it. 
 
-As a work around, you can install both the released "Mattermost" app and sign up to be a [tester](#testing) for the "Mattermost Beta" app so you can connect to two servers at once.
+As a work around, you can install both the released "Mattermost" app and sign up to be a [tester](#testing) for the "WAU Chat" app so you can connect to two servers at once.
 
 ### Will there be second generation apps available for tablets?
 
